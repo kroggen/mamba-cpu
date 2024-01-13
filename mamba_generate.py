@@ -15,7 +15,7 @@ from mamba_ssm.models.mixer_seq_simple import MambaLMHeadModel
 
 
 parser = argparse.ArgumentParser(description="Text Generation")
-parser.add_argument("--model-name", type=str, default="state-spaces/mamba-130m")
+parser.add_argument("--model-name", type=str, default="jondurbin/bagel-dpo-2.8b-v0.2")
 parser.add_argument("--prompt", type=str, default=None)
 parser.add_argument("--promptlen", type=int, default=100)
 parser.add_argument("--genlen", type=int, default=100)
@@ -30,7 +30,8 @@ device = "cpu"
 dtype = torch.float32
 
 print(f"Loading model {args.model_name}")
-is_mamba = args.model_name.startswith("state-spaces/mamba-")
+is_mamba = args.model_name.startswith("state-spaces/mamba-") or "mamba" in args.model_name.lower() or args.model_name.startswith("jondurbin/bagel-dpo-2.8b-v0.2")
+is_mamba = True
 if is_mamba:
     tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-neox-20b")
     model = MambaLMHeadModel.from_pretrained(args.model_name, device=device, dtype=dtype)
