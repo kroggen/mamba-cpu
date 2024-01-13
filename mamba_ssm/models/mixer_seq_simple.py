@@ -3,6 +3,7 @@
 import math
 from functools import partial
 import os
+import json
 
 from collections import namedtuple
 
@@ -171,7 +172,12 @@ class MambaLMHeadModel(nn.Module, GenerationMixin):
 
     @classmethod
     def from_pretrained(cls, pretrained_model_name, device=None, dtype=None, **kwargs):
-        config_data = load_config_hf(pretrained_model_name)
+        if os.path.exists(pretrained_model_name):
+            config = os.path.join(pretrained_model_name, "config.json")
+            print(f"Loading config: {config}")
+            config_data = json.load(open(config))
+        else:
+            config_data = load_config_hf(pretrained_model_name)
         config = MambaConfig(**config_data)
         model = cls(config, device=device, dtype=dtype, **kwargs)
         model.load_state_dict(load_state_dict_hf(pretrained_model_name, device=device, dtype=dtype))
